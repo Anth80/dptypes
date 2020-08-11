@@ -12,7 +12,7 @@ func main() {
 	pkg := flag.String("pkg", "", "package")
 	out := flag.String("out", "", "output file name without extension")
 	name := flag.String("name", "", "name of generated type")
-	dataType := flag.String("name", "", "data type")
+	dataType := flag.String("type", "", "data type")
 	flag.Parse()
 
 	if *gen == "" {
