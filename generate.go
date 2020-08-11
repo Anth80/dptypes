@@ -47,5 +47,5 @@ func main() {
 	default:
 		panic(fmt.Sprintf("Unknown gen type %v", *gen))
 	}
-	ioutil.WriteFile(*out, contents, 0644)
+	ioutil.WriteFile(*out+".go", contents, 0644)
 }
