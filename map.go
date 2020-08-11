@@ -40,7 +40,7 @@ func (x *) Get(key string) {{.DataType}}{
 	`))
 
 	w := bytes.NewBuffer(nil)
-	p := mapParams{name: name, dataType: dataType}
+	p := mapParams{Name: name, DataType: dataType}
 	if err := t.Execute(w, p); err != nil {
 		return []byte{}, err
 	}
