@@ -37,9 +37,13 @@ func main() {
 	}
 
 	var contents []byte
+	var err error
 	switch *gen {
 	case "map":
-		contents = genMap(*name, *pkg, *dataType)
+		contents, err = genMap(*name, *pkg, *dataType)
+		if err != nil {
+			panic(err)
+		}
 	default:
 		panic(fmt.Sprintf("Unknown gen type %v", *gen))
 	}
