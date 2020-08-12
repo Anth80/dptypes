@@ -19,6 +19,7 @@ func genMap(name, pkg, dataType string) ([]byte, error) {
 import (
 	"io/ioutil"
 	"map"
+	"syscall"
 	"unsafe"
 )
 
@@ -31,6 +32,7 @@ type {{.Name}} struct {
 }
 
 func New{{.Name}}() *{{.Name}} {
+	x := {{.Name}}{}
 	var fd int
 	if file, err := ioutil.TempFile("/tmp", "dpmap.*.mmap"); err != nil {
 		panic(err)
@@ -41,7 +43,7 @@ func New{{.Name}}() *{{.Name}} {
 		fd:   fd,
 		buf:  make([]byte, 0),
 		lut:  make(map[string]uint64, 0),
-		size: math.Ceil(unsafe.Sizeof({{.DataType}})/8)*8,
+		size: int(math.Ceil(float64(unsafe.Sizeof(x))/8)*8),
 	}
 }
 
@@ -49,8 +51,8 @@ func (x *{{.Name}}) Set(key string, value {{.DataType}}) {
 
 }
 
-func (x *{{.Name}}) Get(key string) ({{.DataType}}, bool) {
-	if ok, val := x.lut[key]; !ok {
+func (x *{{.Name}}) Get(key string) (*{{.DataType}}, bool) {
+	if val, ok := x.lut[key]; !ok {
 		return nil, false
 	} else {
 		buf, err := syscall.Mmap(x.fd, val*8, x.size, syscall.PROT_READ, syscall.MAP_SHARED)
@@ -61,7 +63,6 @@ func (x *{{.Name}}) Get(key string) ({{.DataType}}, bool) {
 		syscall.Munmap(buf)
 		return x, nil
 	}
-
 }
 	`))
 
