@@ -18,6 +18,7 @@ func genMap(name, pkg, dataType string) ([]byte, error) {
 
 import (
 	"io/ioutil"
+	"map"
 	"unsafe"
 )
 
@@ -30,20 +31,17 @@ type {{.Name}} struct {
 }
 
 func New{{.Name}}() *{{.Name}} {
-	var int fd
-	if fileName, err := ioutil.Tempfile("/tmp", "dpmap.*.mmap"); err != nil {
+	var fd int
+	if file, err := ioutil.TempFile("/tmp", "dpmap.*.mmap"); err != nil {
 		panic(err)
 	} else {
-		if file, err := os.Create(fileName); err != nil {
-			panic(err)
-		} else {
-			fd = int(file.Fd())
-		}
+		fd = int(file.Fd())
 	}
-	return {{.Name}}{
-		buf: make([]byte, 0),
-		lut: make(map[string]uint64, 0),
-		size: math.Ceil(unsafe.Sizeof({{.DataType}}/8))*8,
+	return &{{.Name}}{
+		fd:   fd,
+		buf:  make([]byte, 0),
+		lut:  make(map[string]uint64, 0),
+		size: math.Ceil(unsafe.Sizeof({{.DataType}})/8)*8,
 	}
 }
 
@@ -51,7 +49,7 @@ func (x *{{.Name}}) Set(key string, value {{.DataType}}) {
 
 }
 
-func (x *{{.Name}}) Get(key string) ({{.DataType}}, bool) ({{.DataType}}, bool) {
+func (x *{{.Name}}) Get(key string) ({{.DataType}}, bool) {
 	if ok, val := x.lut[key]; !ok {
 		return nil, false
 	} else {
