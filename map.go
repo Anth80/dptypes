@@ -18,7 +18,7 @@ func genMap(name, pkg, dataType string) ([]byte, error) {
 
 import (
 	"io/ioutil"
-	"map"
+	"math"
 	"syscall"
 	"unsafe"
 )
