@@ -26,8 +26,8 @@ import (
 type {{.Name}} struct {
 	fd      int
 	buf     []byte
-	bufSize uint64
-	lut     map[string]uint64
+	bufSize int64
+	lut     map[string]int64
 	size    int
 }
 
@@ -42,7 +42,7 @@ func New{{.Name}}() *{{.Name}} {
 	return &{{.Name}}{
 		fd:   fd,
 		buf:  make([]byte, 0),
-		lut:  make(map[string]uint64, 0),
+		lut:  make(map[string]int64, 0),
 		size: int(math.Ceil(float64(unsafe.Sizeof(x))/8)*8),
 	}
 }
@@ -61,7 +61,7 @@ func (x *{{.Name}}) Get(key string) (*{{.DataType}}, bool) {
 		}
 		var x {{.DataType}} = *(*{{.DataType}})(unsafe.Pointer(&buf))
 		syscall.Munmap(buf)
-		return x, nil
+		return &x, true
 	}
 }
 	`))
